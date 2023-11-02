@@ -65,15 +65,41 @@ public final class CouponPrinter
 
         try
         {
-            for (int i=0; i < coupons.size(); i++)
+            if(ticketsOnly)
             {
-                Coupon coupon = coupons.get(i);
+                for (int i=0; i < coupons.size(); i++)
+                {
+                    Coupon coupon = coupons.get(i);
 
-                List<CouponField> fields = coupons.get(i).getCoupon();
+                    List<CouponField> fields = coupons.get(i).getCoupon();
 
-                if(coupon.getCouponType().equals("TICKET") || coupon.getCouponType().equals("ITINERARY")) {
-                    FormatType format = (coupon.getPrinterType() != null) ? FormatType.valueOf(coupon.getPrinterType()) : FormatType.GW;
-                    ticketPrinter.print(format, document, cb, fields, properties);
+                    if(coupon.getCouponType().equals("TICKET") || coupon.getCouponType().equals("ITINERARY")) {
+                        FormatType format = (coupon.getPrinterType() != null) ? FormatType.valueOf(coupon.getPrinterType()) : FormatType.GW;
+                        ticketPrinter.print(format, document, cb, fields, properties);
+                    }
+
+                    if (coupon.getCouponType().equals("BIG_E")) {
+                        FormatType format = coupon.getPrinterType() != null ? FormatType.valueOf(coupon.getPrinterType()) : FormatType.GW;
+                        ticketPrinter.print(format, document, cb, fields, false, true);
+                    }
+                }
+            }
+            else
+            {
+                for (int i=0; i < coupons.size(); i++)
+                {
+                    Coupon coupon = coupons.get(i);
+
+                    List<CouponField> fields = coupons.get(i).getCoupon();
+                    if (coupon.getCouponType().equals("BIG_E"))
+                    {
+                        FormatType format = coupon.getPrinterType() != null ? FormatType.valueOf(coupon.getPrinterType()) : FormatType.GW;
+                        ticketPrinter.print(format, document, cb, fields, coupon.getCouponType().equals("BAG"), true);
+                    }else
+                    {
+                        FormatType format = coupon.getPrinterType() != null ? FormatType.valueOf(coupon.getPrinterType()) : FormatType.GW;
+                        ticketPrinter.print(format, document, cb, fields, coupon.getCouponType().equals("BAG"), properties);
+                    }
                 }
             }
 
